@@ -90,12 +90,11 @@ class ScenePublisher (object):
             self.odom_trans.transform.translation.x = self.robotConfig [0]
             self.odom_trans.transform.translation.y = self.robotConfig [1]
             self.odom_trans.transform.translation.z = self.robotConfig [2]
-            self.odom_trans.transform.rotation = \
-                transformations.quaternion_from_euler \
-                (ak = self.robotConfig [3], aj = self.robotConfig [4],
-                 ai = self.robotConfig [5], axes='szyx')
-
-            self.js.position = self.robotConfig[6:]
+            self.odom_trans.transform.rotation = (self.robotConfig [4],
+                                                  self.robotConfig [5],
+                                                  self.robotConfig [6],
+                                                  self.robotConfig [3])
+            self.js.position = self.robotConfig[7:]
             self.js.velocity = 40*[0.,]
             self.js.effort = 40*[0.,]
 
@@ -105,3 +104,7 @@ class ScenePublisher (object):
                 (self.robotConfig [0: 3], self.odom_trans.transform.rotation,
                  now, "base_link", "odom")
             self.pubRobots ['robot'].publish (self.js)
+
+    def __call__ (self, q):
+        self.robotConfig = q
+        self.publish ()
